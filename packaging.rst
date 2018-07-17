@@ -1,5 +1,5 @@
-Writing your first Python Package
-=================================
+Writing a Python Package
+========================
 
 We want to write some code that
 plots triangles:
@@ -77,7 +77,7 @@ contain related data and functionality:
 
    .. code-block:: bash
       
-      geometry/
+      geometry
       ├── __init__.py
       └── shapes.py 
 
@@ -86,47 +86,64 @@ contain related data and functionality:
       from geometry.shapes import draw_triangle
       draw_triangle(args)
 
-Making the package installable
-------------------------------
+Making your project installable
+-------------------------------
 
 To improve their reusability,
 you typically want to be able to
-`import` your modules and packages
+``import`` your modules and packages
 from anywhere,
 i.e., from any directory on your computer.
 
 One way to do this that is **not** recommended
-is to use ``sys.path``.
+is to use ``sys.path``:
 
 .. code-block:: python
 
    import sys
-   sys.path.append('.../path/to/geometry')
+   sys.path.append('/path/to/geometry')
 
    import shapes
 
-A better way is to make your package installable:
+``sys.path`` is a list of directories
+that Python looks for modules and packages in
+when you ``import`` them.
+
+A better way is to make your package installable
+using
+`setuptools <https://setuptools.readthedocs.io/en/latest/>`_.
+To do this, you will need to
+include a ``setup.py`` with your project.
+Your project should be organized as follows:
 
 .. code-block:: bash
 
-   geometry/
+   geometry
    ├── geometry
    │   ├── __init__.py
    │   └── shapes.py
    └── setup.py
 
-A minimal ``setup.py`` may look like the following:
+A minimal ``setup.py`` can include the following
 
 .. code-block:: python 
    :caption: setup.py
+
+   from setuptools import setup
 
    setup(name='geometry',
       version='0.1',
       author='Ashwin Srinath',
       packages=['geometry'])
 
-To install the package:
+You can install the package using ``pip``
+with the following command
+(run from the same directory as ``setup.py``):
 
 .. code-block:: bash
 
    $ pip install -e . --user
+
+This installs the package in *editable* mode,
+creating a link to it in the user's ``site-packages`` directory,
+which happens to be in ``sys.path``.
