@@ -19,7 +19,7 @@
 
 # -- Project information -----------------------------------------------------
 
-project = 'python-102'
+project = 'Python 102'
 copyright = '2018, Ashwin Srinath'
 author = 'Ashwin Srinath'
 
@@ -100,6 +100,7 @@ html_static_path = ['_static']
 #
 # html_sidebars = {}
 
+html_title = 'Python 102'
 
 # -- Options for HTMLHelp output ---------------------------------------------
 
@@ -163,4 +164,4 @@ texinfo_documents = [
 # -- Options for intersphinx extension ---------------------------------------
 
 # Example configuration for intersphinx: refer to the Python standard library.
-intersphinx_mapping = {'https://docs.python.org/': None}
+intersphinx_mapping = {'https://docs.python.org/3/': None}
