@@ -7,6 +7,14 @@ def plot_triangle(points, ax=None):
     patch = plt.Polygon(points)
     ax.add_patch(patch)
 
+    for pt in points:
+        x, y = pt
+        ax.text(x, y, '({}, {})'.format(x, y))
+
+    ax.set_xlabel('x')
+    ax.set_ylabel('y')
+
+
 if __name__ == "__main__":
 
     plot_triangle([
@@ -27,4 +35,4 @@ if __name__ == "__main__":
         (0.9, 0.2)
     ])
 
-    plt.savefig('../images/triangle.png')
+    plt.savefig('../images/triangle.png', transparent=True)
