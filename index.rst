@@ -6,11 +6,28 @@
 Python 102 for scientific computing and data analysis
 =====================================================
 
+How to navigate this guide
+--------------------------
+
+This guide contains sections on
+packaging,
+testing,
+documenting
+and
+improving the performance
+of Python programs.
+At the beginning of each section,
+you are presented with,
+or asked to write,
+a Python program that
+you will incrementally improve.
+
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
    
    packaging
+   testing
 
 
 Indices and tables
