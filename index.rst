@@ -28,6 +28,7 @@ you will incrementally improve.
    
    packaging
    testing
+   performance
 
 
 Indices and tables
