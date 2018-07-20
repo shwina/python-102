@@ -1,3 +1,8 @@
+"""
+This script generates a plot of
+some triangles.
+"""
+
 import matplotlib.pyplot as plt
 
 def plot_triangle(points, ax=None):
