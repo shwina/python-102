@@ -16,11 +16,6 @@ documenting
 and
 improving the performance
 of Python programs.
-At the beginning of each section,
-you are presented with,
-or asked to write,
-a Python program that
-you will incrementally improve.
 
 .. toctree::
    :maxdepth: 2
