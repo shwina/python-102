@@ -1,6 +1,6 @@
-def strflip(s):
+def flip_string(s):
     """
-    strflip: Flip a string
+    flip_string: Flip a string
  
     Parameters
     ----------
