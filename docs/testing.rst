@@ -7,6 +7,13 @@ Testing your code
    excellent article and PyCon 2014 talk
    `Getting Started Testing <https://nedbatchelder.com/text/test0.html>`_.
 
+   | *Tests are the dental floss of development: everyone knows they should do it more,*
+   | *but they don’t, and they feel guilty about it.*
+   | - Ned Batchelder
+
+   | *Code without tests should be approached with a 10-foot pole.*
+   | - me
+
 How can you write
 modular, extensible, and reusable code?
 
@@ -33,7 +40,7 @@ various inputs and compare the results obtained with expected output.
 .. literalinclude:: ../code/flip_string.py
    :caption: flip_string.py
 
-* What test cases did you come up with? Why did you choose those test cases?
+* What tests did you come up with? Why did you choose those tests?
 * How did you organize and execute your tests?
 * Can the results of your tests help you figure out what problem(s)
   there might be with the code?
@@ -64,7 +71,7 @@ each time ``flip_string`` is changed.
 It also requires that we manually inspect the output from each test to
 decide if the code "passes" or "fails" that test.
 Further,
-we need to remember all the test cases we came up with today
+we need to remember all the tests came up with today
 if we want to test again tomorrow.
 
 Writing a test script
@@ -85,7 +92,7 @@ Now, running and re-running our tests is very easy - we just run the script:
 
 It's also easy to add new tests,
 and there's no need to remember
-all the test cases we come up with.
+all the tests we come up with.
 
 Testing using assertions
 ^^^^^^^^^^^^^^^^^^^^^^^^
@@ -216,7 +223,6 @@ it prints a summary of passed v/s failed tests:
 A dot (``.``) indicates a passed test,
 while a ``F`` indicates a failed test.
 
-
 For each failed test,
 it provides further information,
 including the
@@ -236,4 +242,144 @@ in the failed assertion:
     
     test_flip_string.py:10: AssertionError
 
+Useful tests
+^^^^^^^^^^^^
 
+Now that we know how to write and run tests,
+what kind of tests should we write?
+Testing ``flip_string`` for arbitrary words like ``'mario'`` and ``'luigi'``
+might not tell us much about where the problem might be.
+
+Instead, we should choose tests that exercise specific functionality
+of the code we are testing,
+or represent different conditions that the code may be exposed to.
+
+Here are some examples of more useful tests:
+
+* Flipping a string with a single character (no work needs to be done)
+* Flipping a string with two characters (minmum amount of work needs to be done)
+* Flipping a string that reads the same forwards and backwards
+
+.. literalinclude:: ../code/test_flip_string-v5.py
+   :caption: test_flip_string.py
+
+:: 
+
+   collected 3 items
+
+   test_flip_string-v5.py ..F                                               [100%]
+
+   =================================== FAILURES ===================================
+   _____________________________ test_flip_palindrome _____________________________
+
+       def test_flip_palindrome():
+   >       assert flip_string('aba') == 'aba'
+   E       AssertionError: assert 'a' == 'aba'
+   E         - a
+   E         + aba
+
+   test_flip_string.py:10: AssertionError
+   ====================== 2 failed, 1 passed in 0.08 seconds ======================
+
+Fixing the code
+^^^^^^^^^^^^^^^
+
+From the test results above, we see that ``flip_string`` failed
+for the input ``'aba'``.
+Now, can you trace the execution of the code
+in the function ``flip_string`` for this input
+and figure out why it returned ``a``?
+
+After fixing the code,
+re-run the tests to make sure you didn't break anything else
+in the process of fixing this bug -- this is one of the reasons tests are so valuable!
+
+Types of testing
+----------------
+
+Software testing is a vast topic
+and there are
+`many levels and types <https://en.wikipedia.org/wiki/Software_testing>`_
+of software testing.
+
+For scientific and research software,
+the focus of testing efforts is primarily:
+
+1. **Unit tests**: Unit tests aim to test small, independent sections of code
+   (a function or parts of a function),
+   so that when a test fails,
+   the failure can easily be associated with that section of code.
+   This is the kind of testing that we have been doing so far.
+
+2. **Regression tests**: Regression tests aim to check whether
+   changes to the program result in it producing
+   different results from before.
+   Regression tests can test larger sections of code
+   than unit tests.
+   As an example, if you are writing a machine learning application,
+   you may want to run your model on small data
+   in an automated way
+   each time your software undergoes changes,
+   and make sure that the same (or a better) result is produced.
+
+Test-driven development
+-----------------------
+
+`Test-driven development (TDD) <https://en.wikipedia.org/wiki/Extreme_programming>`_
+is the practice of writing tests for a function or method
+*before* actually writing any code for that function or method.
+The TDD process is to:
+
+1. Write a test for a function or method
+2. Write just enough code that the function or method passes that test
+3. Ensure that all tests written so far pass
+4. Repeat the above steps until you are satisfied with the code
+
+Proponents of TDD suggest that this results in better code.
+Whether or not TDD sounds appealing to you,
+writing tests should be *part* of your development process,
+and never an afterthought.
+In the process of writing tests,
+you often come up with new corner cases for your code,
+and realize better ways to organize it.
+The result is usually code that is
+more modular,
+more reusable
+and of course, more testable,
+than if you didn't do any testing.
+
+Good tests
+----------
+
+More tests are always better than less,
+and your code should have as many tests as you are willing to write.
+That being said,
+some tests are more useful than others.
+Designing a useful suite of tests is a challenge in itself,
+and it helps to keep the following in mind when growing tests:
+
+1. **Tests should run quickly**: testing is meant to be done as often as possibly.
+   Your entire test suite should complete in no more than a few seconds,
+   otherwise you won't run your tests often enough for them to be useful.
+   Always test your functions or algorithms on very small and simple data;
+   even if in practice they will be dealing with more complex and large datasets.
+
+2. **Tests should be focused**: each test should exercise a small part of your code.
+   When a test fails, it should be easy for you
+   to figure out which part of your program you need to focus debugging efforts on.
+   This can be difficult if your code isn't modular,
+   i.e., if different parts of your code depend heavily on each other.
+   This is one of the reasons TDD is said to produce more modular code.
+   
+3. **Tests should cover all possible code paths**: if your function has multiple code paths
+   (e.g., an if-else statement), write tests that execute both the "if" part
+   and the "else" part.
+   Otherwise, you might have bugs in your code and still have all tests pass.
+
+4. **Test data should include difficult and edge cases**: it's easy to
+   write code that only handles cases with well-defined inputs and output.
+   In practice however, your code may have to deal with
+   input data for which it isn't clear what the behaviour should be.
+   For example, what should ``flip_string('')`` return?
+   Make sure you write tests for such cases,
+   so that you force your code to handle them.
