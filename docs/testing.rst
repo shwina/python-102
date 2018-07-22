@@ -29,8 +29,8 @@ have the same answer,
 and it is
 **automated testing**.
 
-An example: ``flip_string``
----------------------------
+Testing by example: ``flip_string``
+-----------------------------------
 
 Here is a function called ``flip_string`` that flips (reverses) a string.
 There are bug(s) in this function that we need to find and fix.
@@ -94,8 +94,8 @@ It's also easy to add new tests,
 and there's no need to remember
 all the tests we come up with.
 
-Testing using assertions
-^^^^^^^^^^^^^^^^^^^^^^^^
+Testing with assertions
+^^^^^^^^^^^^^^^^^^^^^^^
 
 One problem with the method above is that
 we *still* need to manually inspect the results of our tests.
@@ -325,7 +325,7 @@ the focus of testing efforts is primarily:
 Test-driven development
 -----------------------
 
-`Test-driven development (TDD) <https://en.wikipedia.org/wiki/Extreme_programming>`_
+`Test-driven development (TDD) <https://en.wikipedia.org/wiki/Test-driven_development>`_
 is the practice of writing tests for a function or method
 *before* actually writing any code for that function or method.
 The TDD process is to:
@@ -348,8 +348,8 @@ more reusable
 and of course, more testable,
 than if you didn't do any testing.
 
-Good tests
-----------
+Growing a useful test suite
+---------------------------
 
 More tests are always better than less,
 and your code should have as many tests as you are willing to write.
@@ -358,7 +358,7 @@ some tests are more useful than others.
 Designing a useful suite of tests is a challenge in itself,
 and it helps to keep the following in mind when growing tests:
 
-1. **Tests should run quickly**: testing is meant to be done as often as possibly.
+1. **Tests should run quickly**: testing is meant to be done as often as possible.
    Your entire test suite should complete in no more than a few seconds,
    otherwise you won't run your tests often enough for them to be useful.
    Always test your functions or algorithms on very small and simple data;
@@ -377,7 +377,7 @@ and it helps to keep the following in mind when growing tests:
    Otherwise, you might have bugs in your code and still have all tests pass.
 
 4. **Test data should include difficult and edge cases**: it's easy to
-   write code that only handles cases with well-defined inputs and output.
+   write code that only handles cases with well-defined inputs and outputs.
    In practice however, your code may have to deal with
    input data for which it isn't clear what the behaviour should be.
    For example, what should ``flip_string('')`` return?
