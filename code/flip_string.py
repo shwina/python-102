@@ -21,9 +21,6 @@ def flip_string(s):
     # Stop whenever we reach the first character.
  
     i = len(s)
-
-    if i == 0:
-        return ''
  
     while True:
         i = i-1
