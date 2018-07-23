@@ -21,7 +21,7 @@ you need to be able to measure the time taken by various parts of your program.
 The ``time`` function
 ^^^^^^^^^^^^^^^^^^^^^
 
-The ` ``time`` <https://docs.python.org/3/library/time.html#time.time>`_
+The `time <https://docs.python.org/3/library/time.html#time.time>`_
 function can be used to time a section of code as follows:
 
 .. code-block:: python
@@ -73,9 +73,9 @@ you may benefit from using
 a  `profiler <https://docs.python.org/3/library/profile.html>`_.
 
 There is also a
-` ``line_profiler`` <https://github.com/rkern/line_profiler>` that can help you automatically profile
+`line_profiler <https://github.com/rkern/line_profiler>`_ that can help you automatically profile
 each line in a script,
-and a ` ``memory_profiler`` <https://github.com/pythonprofilers/memory_profiler>` to measure
+and a `memory_profiler <https://github.com/pythonprofilers/memory_profiler>`_ to measure
 memory consumption.
 
 Install optimized versions of libraries
@@ -113,11 +113,36 @@ and require an initial "guess" for the solution.
 Typically, the closer this initial guess is to the actual solution,
 the faster the algorithm performs.
 
-Understand how data is accessed and computed on
------------------------------------------------
+Avoid repeatedly allocating, copying and rearranging data
+---------------------------------------------------------
 
-Train yourself to think about how data is accessed
-and computed on by a certain line or section of code.
+Repeatedly creating and destroying new data can be very expensive
+especially if you are working with very large arrays or data frames.
+So avoid, for instance, creating a new array each time inside a loop.
+When operating on NumPy arrays,
+memory is allocated for intermediate results.
+Packages like `numexpr <https://github.com/pydata/numexpr>`_ aim to help with this.
+
+Understand when data needs to be copied v/s when data can be operated "in-place".
+It also helps to know *when* copies are made. For example, do you think
+the following code results in two copies of the same array?
+
+.. code-block:: python
+
+   import numpy as np
+
+   a = np.random.rand(50, 50)
+   b = a
+
+`This article <https://nedbatchelder.com/text/names.html>`_ clears up a lot of confusion
+about how names and values work in Python and when copies are made v/s when they are not.
+
+
+Benchmark, benchmark, benchmark!
+--------------------------------
+
+If there are two ways of doing the same thing,
+*benchmark* to see which is faster for different problem sizes.
 
 For example, let's say we want to compute the average
 ``hindfooth_length`` for all species in ``plot_id`` 13 in the following dataset:
@@ -166,18 +191,16 @@ but the difference in performance is significant:
 
 Why do you think the first method is slower?
 
-Some things that can make code slow are:
+Access data from memory efficiently
+-----------------------------------
 
-* Lots of copying/rearranging data. Allocating space for new data
-  or rearranging existing data takes a lot of effort.
-
-* Accessing data in the "wrong order":
-  it is always more efficient to access values that are
-  "closer together" in memory than values that are farther apart.
-  For example, looping over the elements along the rows of a 2-d NumPy array
-  is *much* more efficient than looping over the elements along its columns.
-  Similarly, looping over the columns of a DataFrame in Pandas will be faster
-  than looping over its rows.
+Accessing data in the "wrong order":
+it is always more efficient to access values that are
+"closer together" in memory than values that are farther apart.
+For example, looping over the elements along the rows of a 2-d NumPy array
+is *much* more efficient than looping over the elements along its columns.
+Similarly, looping over the columns of a DataFrame in Pandas will be faster
+than looping over its rows.
 
 * Redundant computations / computing "too much":
   if you only need to compute on a subset of your data,
@@ -357,3 +380,20 @@ interface with C/C++ libraries.
 
 Parallelization
 ---------------
+
+Finally,
+if your computer has multiple cores,
+or if you have access to a bigger computer (e.g., a high-performance computing cluster),
+parallelizing your code may be an option.
+
+* Note that many libraries support parallelization without any effort on your part.
+  Libraries like Numba and `Tensorflow <https://www.tensorflow.org/>`_ can use all the cores on your CPU,
+  and even your GPU for accelerating computations.
+
+* `Dask <https://dask.pydata.org/en/latest/>`_ is a great library for parallelizing computations
+  and operating on large datasets that don't fit in RAM.
+
+* The `multiprocessing <https://docs.python.org/3/library/multiprocessing.html>`_ package
+  is useful when you have several independent tasks that can all be done concurrently.
+  `joblib <https://pythonhosted.org/joblib/>`_ is another popular library for this.
+
