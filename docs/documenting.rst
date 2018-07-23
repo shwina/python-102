@@ -101,6 +101,9 @@ Here is a simple example of this in action:
 
 .. literalinclude:: ../code/flip_list-v1.py
 
+NumPy's `documentation guidelines <https://numpydoc.readthedocs.io/en/latest/>`_ are a great
+reference for more information about what and how to document your code.
+
 Doctests
 --------
 
@@ -139,7 +142,3 @@ using a document generator such as
 You can use services like
 `readthedocs <http://readthedocs.org/>`_
 to build and host your website for free.
-
-
-
-
