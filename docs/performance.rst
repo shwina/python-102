@@ -113,140 +113,6 @@ and require an initial "guess" for the solution.
 Typically, the closer this initial guess is to the actual solution,
 the faster the algorithm performs.
 
-Avoid repeatedly allocating, copying and rearranging data
----------------------------------------------------------
-
-Repeatedly creating and destroying new data can be very expensive
-especially if you are working with very large arrays or data frames.
-So avoid, for instance, creating a new array each time inside a loop.
-When operating on NumPy arrays,
-memory is allocated for intermediate results.
-Packages like `numexpr <https://github.com/pydata/numexpr>`_ aim to help with this.
-
-Understand when data needs to be copied v/s when data can be operated "in-place".
-It also helps to know *when* copies are made. For example, do you think
-the following code results in two copies of the same array?
-
-.. code-block:: python
-
-   import numpy as np
-
-   a = np.random.rand(50, 50)
-   b = a
-
-`This article <https://nedbatchelder.com/text/names.html>`_ clears up a lot of confusion
-about how names and values work in Python and when copies are made v/s when they are not.
-
-
-Benchmark, benchmark, benchmark!
---------------------------------
-
-If there are two ways of doing the same thing,
-*benchmark* to see which is faster for different problem sizes.
-
-For example, let's say we want to compute the average
-``hindfooth_length`` for all species in ``plot_id`` 13 in the following dataset:
-
-.. code-block:: python
-
-    In [1]: data = pandas.read_csv('feet.csv')
-
-    In [2]: data.head()
-    Out[2]:
-       plot_id species_id  hindfoot_length
-    0        2         NL             32.0
-    1        3         NL             33.0
-    2        2         DM             37.0
-    3        7         DM             36.0
-    4        3         DM             35.0
-
-One way to do this would be to group by the ``plot_id``,
-compute the mean hindfoot length for each group,
-and extract the result for the group with ``plot_id`` 13:
-
-.. code-block:: python
-
-    In [2]: data.groupby('plot_id')['hindfoot_length'].mean()[13]
-    Out[2]: 27.570887035633056
-
-Another way would be to filter the data first,
-keeping only records with ``plot_id`` 13,
-and then computing the mean of the ``hindfoot_length`` column:
-
-.. code-block:: python
-
-    In [3]: data[data['plot_id'] == 13]['hindfoot_length'].mean()
-    Out[3]: 27.570887035633056
-
-Both methods give identical results,
-but the difference in performance is significant:
-
-.. code-block:: python
-
-    In [4]: %timeit data.groupby('plot_id')['hindfoot_length'].mean()[13]
-    1.34 ms ± 24.5 µs per loop (mean ± std. dev. of 7 runs, 1000 loops each)
-
-    In [5]: %timeit data[data['plot_id'] == 13]['hindfoot_length'].mean()
-    750 µs ± 506 ns per loop (mean ± std. dev. of 7 runs, 1000 loops each)
-
-Why do you think the first method is slower?
-
-Access data from memory efficiently
------------------------------------
-
-Accessing data in the "wrong order":
-it is always more efficient to access values that are
-"closer together" in memory than values that are farther apart.
-For example, looping over the elements along the rows of a 2-d NumPy array
-is *much* more efficient than looping over the elements along its columns.
-Similarly, looping over the columns of a DataFrame in Pandas will be faster
-than looping over its rows.
-
-* Redundant computations / computing "too much":
-  if you only need to compute on a subset of your data,
-  filter *before* doing the computation
-  rather than after.
-
-Avoid explicit loops
---------------------
-
-Very often, you need to operate on multiple elements of a collection
-such as a
-NumPy array or
-Pandas DataFrame.
-
-In such cases, it is almost always a bad idea to write
-an explicit ``for`` loop over the elements.
-
-For instance, looping over the rows (a.k.a, *indices* or *records*)
-of a Pandas DataFrame is considered poor practice, and is very slow.
-Consider replacing values in a column of a dataframe:
-
-.. code-block:: python
-
-   In [5]: %%timeit
-      ...: for i in range(len(data['species_id'])):
-      ...:     if data.loc[i, 'species_id'] == 'NL':
-      ...:         data.loc[i, 'species_id'] = 'NZ'
-      ...:
-   308 ms ± 4.49 ms per loop (mean ± std. dev. of 7 runs, 1 loop each)
-
-A better way to do this is
-simply to use the ``replace()`` method:
-
-.. code-block:: python
-
-    In [2]: %time data['species_id'].replace('NL', 'NZ', inplace=True)
-    CPU times: user 3.1 ms, sys: 652 µs, total: 3.75 ms
-    Wall time: 3.34 ms
-
-In addition to being faster,
-this also leads to more readable code.
-
-Of course, loops are unavoidable in many situations;
-but look for alternatives before you write a ``for`` loop
-over the elements of an array, DataFrame, or similar data structure.
-
 Choose the appropriate data format
 ----------------------------------
 
@@ -304,6 +170,140 @@ Compare the performance with Pandas' ``read_csv`` function:
 
 It also isn't nearly as versatile,
 and doesn't account for the dozens of edge cases than Pandas does.
+
+Benchmark, benchmark, benchmark!
+--------------------------------
+
+If there are two ways of doing the same thing,
+*benchmark* to see which is faster for different problem sizes.
+
+For example, let's say we want to compute the average
+``hindfooth_length`` for all species in ``plot_id`` 13 in the following dataset:
+
+.. code-block:: python
+
+    In [1]: data = pandas.read_csv('feet.csv')
+
+    In [2]: data.head()
+    Out[2]:
+       plot_id species_id  hindfoot_length
+    0        2         NL             32.0
+    1        3         NL             33.0
+    2        2         DM             37.0
+    3        7         DM             36.0
+    4        3         DM             35.0
+
+One way to do this would be to group by the ``plot_id``,
+compute the mean hindfoot length for each group,
+and extract the result for the group with ``plot_id`` 13:
+
+.. code-block:: python
+
+    In [2]: data.groupby('plot_id')['hindfoot_length'].mean()[13]
+    Out[2]: 27.570887035633056
+
+Another way would be to filter the data first,
+keeping only records with ``plot_id`` 13,
+and then computing the mean of the ``hindfoot_length`` column:
+
+.. code-block:: python
+
+    In [3]: data[data['plot_id'] == 13]['hindfoot_length'].mean()
+    Out[3]: 27.570887035633056
+
+Both methods give identical results,
+but the difference in performance is significant:
+
+.. code-block:: python
+
+    In [4]: %timeit data.groupby('plot_id')['hindfoot_length'].mean()[13]
+    1.34 ms ± 24.5 µs per loop (mean ± std. dev. of 7 runs, 1000 loops each)
+
+    In [5]: %timeit data[data['plot_id'] == 13]['hindfoot_length'].mean()
+    750 µs ± 506 ns per loop (mean ± std. dev. of 7 runs, 1000 loops each)
+
+Why do you think the first method is slower?
+
+Avoid explicit loops
+--------------------
+
+Very often, you need to operate on multiple elements of a collection
+such as a
+NumPy array or
+Pandas DataFrame.
+
+In such cases, it is almost always a bad idea to write
+an explicit ``for`` loop over the elements.
+
+For instance, looping over the rows (a.k.a, *indices* or *records*)
+of a Pandas DataFrame is considered poor practice, and is very slow.
+Consider replacing values in a column of a dataframe:
+
+.. code-block:: python
+
+   In [5]: %%timeit
+      ...: for i in range(len(data['species_id'])):
+      ...:     if data.loc[i, 'species_id'] == 'NL':
+      ...:         data.loc[i, 'species_id'] = 'NZ'
+      ...:
+   308 ms ± 4.49 ms per loop (mean ± std. dev. of 7 runs, 1 loop each)
+
+A better way to do this is
+simply to use the ``replace()`` method:
+
+.. code-block:: python
+
+    In [2]: %time data['species_id'].replace('NL', 'NZ', inplace=True)
+    CPU times: user 3.1 ms, sys: 652 µs, total: 3.75 ms
+    Wall time: 3.34 ms
+
+In addition to being faster,
+this also leads to more readable code.
+
+Of course, loops are unavoidable in many situations;
+but look for alternatives before you write a ``for`` loop
+over the elements of an array, DataFrame, or similar data structure.
+
+Avoid repeatedly allocating, copying and rearranging data
+---------------------------------------------------------
+
+Repeatedly creating and destroying new data can be very expensive
+especially if you are working with very large arrays or data frames.
+So avoid, for instance, creating a new array each time inside a loop.
+When operating on NumPy arrays,
+memory is allocated for intermediate results.
+Packages like `numexpr <https://github.com/pydata/numexpr>`_ aim to help with this.
+
+Understand when data needs to be copied v/s when data can be operated "in-place".
+It also helps to know *when* copies are made. For example, do you think
+the following code results in two copies of the same array?
+
+.. code-block:: python
+
+   import numpy as np
+
+   a = np.random.rand(50, 50)
+   b = a
+
+`This article <https://nedbatchelder.com/text/names.html>`_ clears up a lot of confusion
+about how names and values work in Python and when copies are made v/s when they are not.
+
+Access data from memory efficiently
+-----------------------------------
+
+Accessing data in the "wrong order":
+it is always more efficient to access values that are
+"closer together" in memory than values that are farther apart.
+For example, looping over the elements along the rows of a 2-d NumPy array
+is *much* more efficient than looping over the elements along its columns.
+Similarly, looping over the columns of a DataFrame in Pandas will be faster
+than looping over its rows.
+
+* Redundant computations / computing "too much":
+  if you only need to compute on a subset of your data,
+  filter *before* doing the computation
+  rather than after.
+
 
 Interfacing with compiled code
 ------------------------------
