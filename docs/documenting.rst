@@ -120,11 +120,11 @@ using the ``--doctest-modules`` switch:
 
 ::
 
-   $ pytest --doctest-modules flip_list-v2.py
+   $ pytest --doctest-modules flip_list.py
 
    collected 1 item
 
-   flip_list-v2.py .                                                        [100%]
+   flip_list.py .                                                            [100%]
 
    =========================== 1 passed in 0.03 seconds ===========================
 
