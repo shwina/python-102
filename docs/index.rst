@@ -63,6 +63,7 @@ you will need:
    
    packaging
    testing
+   documenting
    performance
 
 

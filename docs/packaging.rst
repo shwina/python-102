@@ -1,5 +1,5 @@
-Organizing code in a Python project
-===================================
+Organizing code for a Python project
+====================================
 
 A well structured project is
 easy to navigate and make changes and improvements to.
