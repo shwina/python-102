@@ -1,40 +1,123 @@
 Improving the performance of Python programs
 ============================================
 
-Here are some general recommendations for improving
-the performance of your code:
+Timing code and identifying bottlenecks
+---------------------------------------
 
-Identify bottlenecks
-^^^^^^^^^^^^^^^^^^^^
+Of course,
+the first step toward improving performance
+is to figure out where to focus your efforts.
+This means identifying the section of code in your program
+that is taking the most time,
+i.e., the "bottleneck".
 
-This is often the most important step.
+Sometimes,
+the bottleneck is very obvious
+(e.g., the training step in a machine learning application),
+and sometimes it may not be clear.
+In the latter case,
+you need to be able to measure the time taken by various parts of your program.
 
-Choosing the right algorithm
+The ``time`` function
+^^^^^^^^^^^^^^^^^^^^^
+
+The ` ``time`` <https://docs.python.org/3/library/time.html#time.time>`_
+function can be used to time a section of code as follows:
+
+.. code-block:: python
+
+   import time
+   import numpy as np
+
+   t1 = time.time()
+   a = np.random.rand(5000, 5000)
+   t2 = time.time()
+   print("Generating random array took {} seconds".format(t2-t1))
+
+::
+
+   Generating random array took 0.44880104064941406 seconds
+
+
+``%timeit`` and ``%%timeit``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+``%timeit%`` and ``%%timeit`` are
+`magic statements <https://ipython.readthedocs.io/en/stable/interactive/magics.html>`_
+that can be used in IPython
+or in Jupyter Notebook
+for timing a single line of code or a block of code
+conveniently:
+
+::
+    
+   In [1]: import numpy as np
+
+   In [2]: %timeit np.random.rand(5000, 5000)
+   410 ms ± 2.59 ms per loop (mean ± std. dev. of 7 runs, 1 loop each)
+
+   In [3]: %%timeit
+      ...: a = np.random.rand(5000, 5000)
+      ...: b = np.random.rand(5000, 5000)
+      ...: c = a * b
+      ...:
+   897 ms ± 10.2 ms per loop (mean ± std. dev. of 7 runs, 1 loop each)
+
+Profilers
+^^^^^^^^^
+
+``time`` and ``timeit`` should help with most of your
+measurement needs,
+but if you need to profile a very long program with lots of functions,
+you may benefit from using
+a  `profiler <https://docs.python.org/3/library/profile.html>`_.
+
+There is also a
+` ``line_profiler`` <https://github.com/rkern/line_profiler>` that can help you automatically profile
+each line in a script,
+and a ` ``memory_profiler`` <https://github.com/pythonprofilers/memory_profiler>` to measure
+memory consumption.
+
+Install optimized versions of libraries
+---------------------------------------
+
+This is the easiest way to get "free" performance improvements.
+If your computer supports it,
+install optimized version of Python libraries,
+for example, those provided by
+the `Intel Distribution for Python <https://software.intel.com/en-us/distribution-for-python>`_.
+
+Another option is `PyPy <https://pypy.org/compat.html>`_.
+
+Choose the right algorithm
+--------------------------
+
+This is one of the most effective ways to improve the performance
+of a program.
 
 When choosing a function from a library
 or writing your own,
 ensure that  you understand how it will perform
 for the type and size of data you have,
-and what its limitations are.
+and what options there may be to boost its performance.
+Always benchmark to compare with other functions and libraries.
 
 For example,
-if you are doing linear algebra
-with very large matrices containing very few non-zero values,
-you might find much better performance
-using
-`sparse <https://en.wikipedia.org/wiki/Sparse_matrix>`_ matrices
-and algorithms compared to the dense matrix format.
+if you are doing linear algebra,
+you may benefit from the use of
+`sparse <https://en.wikipedia.org/wiki/Sparse_matrix>`_ matrices and algorithms
+if you are dealing with very large matrices with relatively few non-zeros.
 
-Always benchmark to compare with other libraries/functions.
+As another example, many kinds of algorithms are iterative
+and require an initial "guess" for the solution.
+Typically, the closer this initial guess is to the actual solution,
+the faster the algorithm performs.
 
-Accessing and operating on data efficiently
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Understand how data is accessed and computed on
+-----------------------------------------------
 
-In programming,
-there are often many ways to achive the same result.
-These methods may vary in the way data is accessed and operated on,
-and sometimes this can lead to significant performance differences.
+Train yourself to think about how data is accessed
+and computed on by a certain line or section of code.
 
 For example, let's say we want to compute the average
 ``hindfooth_length`` for all species in ``plot_id`` 13 in the following dataset:
@@ -81,8 +164,28 @@ but the difference in performance is significant:
     In [5]: %timeit data[data['plot_id'] == 13]['hindfoot_length'].mean()
     750 µs ± 506 ns per loop (mean ± std. dev. of 7 runs, 1000 loops each)
 
-Avoiding explicit loops
-^^^^^^^^^^^^^^^^^^^^^^^
+Why do you think the first method is slower?
+
+Some things that can make code slow are:
+
+* Lots of copying/rearranging data. Allocating space for new data
+  or rearranging existing data takes a lot of effort.
+
+* Accessing data in the "wrong order":
+  it is always more efficient to access values that are
+  "closer together" in memory than values that are farther apart.
+  For example, looping over the elements along the rows of a 2-d NumPy array
+  is *much* more efficient than looping over the elements along its columns.
+  Similarly, looping over the columns of a DataFrame in Pandas will be faster
+  than looping over its rows.
+
+* Redundant computations / computing "too much":
+  if you only need to compute on a subset of your data,
+  filter *before* doing the computation
+  rather than after.
+
+Avoid explicit loops
+--------------------
 
 Very often, you need to operate on multiple elements of a collection
 such as a
@@ -98,16 +201,14 @@ Consider replacing values in a column of a dataframe:
 
 .. code-block:: python
 
-    In [1]: %%time
-       ...: for row in range(data.shape[0]):
-       ...:     if data.loc[row, 'species_id'] == 'NL':
-       ...:         data.loc[row, 'species_id'] = 'NZ'
-       ...:
-    CPU times: user 3.95 s, sys: 12.5 ms, total: 3.96 s
-    Wall time: 3.97 s
+   In [5]: %%timeit
+      ...: for i in range(len(data['species_id'])):
+      ...:     if data.loc[i, 'species_id'] == 'NL':
+      ...:         data.loc[i, 'species_id'] = 'NZ'
+      ...:
+   308 ms ± 4.49 ms per loop (mean ± std. dev. of 7 runs, 1 loop each)
 
-Doing this with a ``for`` loop takes about 4 seconds on my computer.
-Of course, a much better way to do this is
+A better way to do this is
 simply to use the ``replace()`` method:
 
 .. code-block:: python
@@ -117,73 +218,142 @@ simply to use the ``replace()`` method:
     Wall time: 3.34 ms
 
 In addition to being faster,
-this also leads to much more readable code.
+this also leads to more readable code.
 
-Reading and writing data efficiently
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Of course, loops are unavoidable in many situations;
+but look for alternatives before you write a ``for`` loop
+over the elements of an array, DataFrame, or similar data structure.
 
-A typical bottleneck is when your code reads or writes data from disk
-(i.e., from a file), especialy for large files or frequent reads/writes.
-Some considerations for I/O are:
+Choose the appropriate data format
+----------------------------------
 
-1. **Use the appropriate data format**: Familiarize yourself with
-   the various data formats available for the type of data you are dealing with,
-   and the performance considerations for each.
-   For example,
-   `this page <https://pandas.pydata.org/pandas-docs/stable/io.html>`_
-   provides a good overview of various data formats for tabular data
-   supported by the Pandas library.
-   Performance for each is reported
-   `here <https://pandas.pydata.org/pandas-docs/stable/io.html#performance-considerations>`_.
+Familiarize yourself with
+the various data formats available for the type of data you are dealing with,
+and the performance considerations for each.
+For example,
+`this page <https://pandas.pydata.org/pandas-docs/stable/io.html>`_
+provides a good overview of various data formats for tabular data
+supported by the Pandas library.
+Performance for each is reported
+`here <https://pandas.pydata.org/pandas-docs/stable/io.html#performance-considerations>`_.
 
-2. **Avoid writing your own readers and writers**: Resist any temptation
-   to write your own code for reading and writing data from files,
-   and instead rely on other well-tested and well-used implementations.
+Don't reinvent the wheel
+------------------------
 
-   For instance, it's easy to write a few lines of Python to
-   read data from a ``.csv`` file into a Pandas DataFrame:
+Resist any temptation
+to write your own implementation for a
+common task or a well-known algorithm.
+Rely instead on other well-tested and well-used implementations.
+
+For instance, it's easy to write a few lines of Python to
+read data from a ``.csv`` file into a Pandas DataFrame:
    
-   .. code-block:: python
-      :caption: my_csv.py
+.. code-block:: python
+   :caption: my_csv.py
 
-      def read_csv(fname):
-          with open(fname) as f:
-              col_names = f.readline().rstrip().split(',')
-              df = pandas.DataFrame(columns=col_names)
-                  for line in f:
-                      record = pandas.DataFrame([line.rstrip().split(',')], columns=col_names)
-                      df = df.append(record, ignore_index=True)
-          return df
+   def read_csv(fname):
+       with open(fname) as f:
+           col_names = f.readline().rstrip().split(',')
+           df = pandas.DataFrame(columns=col_names)
+               for line in f:
+                   record = pandas.DataFrame([line.rstrip().split(',')], columns=col_names)
+                   df = df.append(record, ignore_index=True)
+       return df
 
-   But the performance of such code is extremely poor. Compare with the
-   Pandas' ``read_csv`` function:
+But such code performs poorly.
+Compare the performance with Pandas' ``read_csv`` function:
 
-   .. code-block:: python
+.. code-block:: python
 
-      In [1]: from my_csv import read_csv
+   In [1]: from my_csv import read_csv
 
-      In [2]: %time data = read_csv('feet.csv')
-      CPU times: user 2min 3s, sys: 1.39 s, total: 2min 4s
-      Wall time: 2min 5s
+   In [2]: %time data = read_csv('feet.csv')
+   CPU times: user 2min 3s, sys: 1.39 s, total: 2min 4s
+   Wall time: 2min 5s
 
-   .. code-block:: python
-      
-      In [1]: from pandas import read_csv
+.. code-block:: python
+   
+   In [1]: from pandas import read_csv
 
-      In [2]: %time data = read_csv('feet.csv')
-      CPU times: user 28.5 ms, sys: 10.8 ms, total: 39.3 ms
-      Wall time: 54.2 ms
+   In [2]: %time data = read_csv('feet.csv')
+   CPU times: user 28.5 ms, sys: 10.8 ms, total: 39.3 ms
+   Wall time: 54.2 ms
 
-3. If you are using a high-performance computing cluster,
-   it becomes important to consider whether data is read from and written to
-   a shared *network file system* (NFS), which are very common in HPC settings.
-   On such systems,
-   it is much more efficient to perform large, less frequent reads/write operations as opposed
-   to small, frequent ones.
+It also isn't nearly as versatile,
+and doesn't account for the dozens of edge cases than Pandas does.
 
+Interfacing with compiled code
+------------------------------
 
+You may have heard that Python is "slow"
+compared to other languages like C, C++, or Fortran.
+This is somewhat true in that Python programs
+written in "pure Python", i.e., without the use
+of any libraries except the standard libraries,
+will be slow compared to their C/Fortran counterparts.
+One of the reasons that C is so much faster than Python
+is that it is a
+`compiled language <https://en.wikipedia.org/wiki/Compiled_language>`_,
+while Python is an
+`interpreted language <https://en.wikipedia.org/wiki/Interpreted_language>`_.
+
+However,
+the core of libraries like
+NumPy are actually written in C,
+making them much faster than "pure Python".
+
+It's also possible for you to write your own code
+so that it interfaces with languages like C, C++ or Fortran.
+Better still,
+you often don't even need to write any code in those languages,
+and instead can have other libraries "generate" them for you.
+
+`Numba <https://numba.pydata.org/>`_ is a library that lets you compile
+code written in Python using
+a very convenient "decorator" syntax.
+
+As an example,
+consider numerically evaluating the derivative
+of a function using finite differences.
+A function that uses NumPy to do this might look like the following:
+
+.. literalinclude:: ../code/derivatives.py
+   :language: python
+   :caption: derivatives.py
+
+Below, we time the function for a grid of 10000000 points:
+
+:: 
+
+   In [1]: x = np.linspace(0, 1, 10000000)
+
+   In [2]: dx = x[1] - x[0]
+
+   In [3]: f = np.sin(2 * np.pi * x / 1000000)
+
+   In [4]: y = np.zeros_like(f)
+
+   In [5]: %timeit dfdx(f, dx, y)
+   61.1 ms ± 2.62 ms per loop (mean ± std. dev. of 7 runs, 10 loops each)
+
+Below is a function that is compiled using Numba to do the same task:
+
+.. literalinclude:: ../code/derivatives_numba.py
+   :language: python
+   :caption: derivatives.py
+
+We see much better performance for the same grid size:
+
+::
+
+   In [1]: %timeit dfdx(f, dx, y)
+   14.6 ms ± 282 µs per loop (mean ± std. dev. of 7 runs, 1 loop each)
+
+`Cython <http://cython.org/>`_ is another option for interfacing with compiled code.
+It performs about the same as Numba but requires much more effort;
+although it can do many things that Numba cannot,
+such as generating C code, and
+interface with C/C++ libraries.
 
 Parallelization
-^^^^^^^^^^^^^^^
-
-
+---------------

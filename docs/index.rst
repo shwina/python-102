@@ -53,7 +53,7 @@ If you plan to participate in the hands-on exercises,
 you will need:
 
 * 1 laptop
-* .. with `Anaconda <https://www.anaconda.com/download/>`_ installed on it
+* with `Anaconda <https://www.anaconda.com/download/>`_ installed on it
 * 1 or more friends.
   It is **highly** encouraged to work in groups,
   so if you haven't already,
