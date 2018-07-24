@@ -34,6 +34,7 @@ What you will learn
 3. How to document your code so that it is easy for
    you and others to use and navigate.
 4. How to improve the performance of your code.
+5. How to improve the messaging behavior or your code.
 
 What you need to know
 ---------------------
@@ -65,6 +66,7 @@ you will need:
    testing
    documenting
    performance
+   logging
 
 
 Indices and tables
