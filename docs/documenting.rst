@@ -24,8 +24,8 @@ Docstrings and comments
 
 Documentation is *not* comments.
 
-A *docstring* in Python is a string literal that appears at
-the beginning of a module, function, class, or method.
+A *docstring* in Python is a string literal
+that appears at the beginning of a module, function, class, or method.
 
 .. code-block:: python
 
@@ -36,8 +36,7 @@ the beginning of a module, function, class, or method.
 
 The *docstring* of a module, function, class or method
 becomes the ``__doc__`` attribute of that object,
-and is printed
-if you type ``help(object)``:
+and is printed if you type ``help(object)``:
 
 .. code-block:: python
 
@@ -94,7 +93,8 @@ At minimum, the docstring for a function or method should consist of the followi
    their types,
    and default values (in the case of optional arguments).
 3. A **Returns** section that similarly describes the return values.
-4. Optionally, a **Notes** section that describes the implementation,
+4. Optionally,
+   a **Notes** section that describes the implementation,
    and includes references.
 
 Here is a simple example of this in action:

@@ -14,7 +14,8 @@ We want to write a Python program that draws triangles:
 .. image:: images/triangle.png
    :width: 60%
 
-We use the the `Polygon <https://matplotlib.org/gallery/api/patch_collection.html>`_ class
+We use the the
+`Polygon <https://matplotlib.org/gallery/api/patch_collection.html>`_ class
 of the `matplotlib <https://matplotlib.org/>`_ library
 and write a script called ``draw_triangles.py`` to do this:
 
@@ -38,8 +39,9 @@ A good function:
 
 * has a descriptive name. ``draw_triangle`` is a better name
   than ``plot``.
-* is small -- no more than a couple of dozen lines -- and does
-  **one** thing. If a function is doing too much,
+* is small -- no more than a couple of dozen lines --
+  and does **one** thing.
+  If a function is doing too much,
   then it should probably be broken into smaller functions.
 * can be easily tested -- more on this soon.
 * is well documented -- more on this later.
@@ -59,8 +61,9 @@ A *module* is a file containing a collection of Python definitions and statement
 typically named with a ``.py`` suffix.
 
 A *script* is a module that is intended to be run by the Python interpreter.
-For example, the script ``draw_triangles.py`` can be run
-from the command-line using the command:
+For example,
+the script ``draw_triangles.py`` can be run from the command-line
+using the command:
 
 ::
 
@@ -93,8 +96,7 @@ it is possible to avoid running other code by placing it under
 .. literalinclude:: ../code/draw_triangles-v3.py
    :caption: draw_triangles.py
 
-When another module imports
-the module ``draw_triangles`` above,
+When another module imports the module ``draw_triangles`` above,
 the code under ``if __name__ == "__main__"`` is **not** executed.
 
 How to structure a Python project?
@@ -143,8 +145,8 @@ each containing related data and functionality.
 .. literalinclude:: ../code/graphics.py
    :caption: graphics.py
 
-Typically, the "top-level" executable code is put in
-in a separate script
+Typically, the "top-level" executable code is
+put in in a separate script
 which imports functions and data from other modules:
 
 .. code-block:: python 
@@ -173,8 +175,8 @@ which imports functions and data from other modules:
 Packages
 ^^^^^^^^
 
-A Python **package** is a directory containing
-a file called ``__init__.py``,
+A Python **package** is a directory
+containing a file called ``__init__.py``,
 which can be empty.
 Packages can contain modules
 as well as other packages
@@ -190,8 +192,7 @@ containing various modules:
    ├── graphics.py
    └── __init__.py
 
-A module from the package can be imported
-using the "dot" notation:
+A module from the package can be imported using the "dot" notation:
 
 .. code-block:: python
 
@@ -213,8 +214,8 @@ which really just imports the ``__init__.py`` module.
    
    import geometry
 
-If ``__init__.py`` is empty, there is "nothing" in the imported
-``geometry`` package,
+If ``__init__.py`` is empty,
+there is "nothing" in the imported ``geometry`` package,
 and the following line gives an error:
 
 .. code-block:: python
@@ -237,8 +238,7 @@ you typically want to be able to
 from anywhere,
 i.e., from any directory on your computer.
 
-One way to do this
-is to use ``sys.path``:
+One way to do this is to use ``sys.path``:
 
 .. code-block:: python
 
@@ -255,8 +255,7 @@ Installable projects
 ^^^^^^^^^^^^^^^^^^^^
 
 A better way is to make your project "installable"
-using
-`setuptools <https://setuptools.readthedocs.io/en/latest/>`_.
+using `setuptools <https://setuptools.readthedocs.io/en/latest/>`_.
 To do this, you will need to
 include a ``setup.py`` with your project.
 Your project should be organized as follows:

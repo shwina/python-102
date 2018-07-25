@@ -66,17 +66,17 @@ conveniently:
 Profilers
 ^^^^^^^^^
 
-``time`` and ``timeit`` should help with most of your
-measurement needs,
+``time`` and ``timeit`` should help with most of your measurement needs,
 but if you need to profile a very long program with lots of functions,
 you may benefit from using
 a  `profiler <https://docs.python.org/3/library/profile.html>`_.
 
 There is also a
-`line_profiler <https://github.com/rkern/line_profiler>`_ that can help you automatically profile
+`line_profiler <https://github.com/rkern/line_profiler>`_
+that can help you automatically profile
 each line in a script,
-and a `memory_profiler <https://github.com/pythonprofilers/memory_profiler>`_ to measure
-memory consumption.
+and a `memory_profiler <https://github.com/pythonprofilers/memory_profiler>`_
+to measure memory consumption.
 
 Install optimized versions of libraries
 ---------------------------------------
@@ -92,8 +92,8 @@ Another option is `PyPy <https://pypy.org/compat.html>`_.
 Choose the right algorithm
 --------------------------
 
-This is one of the most effective ways to improve the performance
-of a program.
+This is one of the most effective ways to
+improve the performance of a program.
 
 When choosing a function from a library
 or writing your own,
@@ -121,8 +121,8 @@ the various data formats available for the type of data you are dealing with,
 and the performance considerations for each.
 For example,
 `this page <https://pandas.pydata.org/pandas-docs/stable/io.html>`_
-provides a good overview of various data formats for tabular data
-supported by the Pandas library.
+provides a good overview of various data formats for
+tabular data supported by the Pandas library.
 Performance for each is reported
 `here <https://pandas.pydata.org/pandas-docs/stable/io.html#performance-considerations>`_.
 
@@ -177,8 +177,9 @@ Benchmark, benchmark, benchmark!
 If there are two ways of doing the same thing,
 *benchmark* to see which is faster for different problem sizes.
 
-For example, let's say we want to compute the average
-``hindfooth_length`` for all species in ``plot_id`` 13 in the following dataset:
+For example, let's say we want to compute
+the average ``hindfooth_length`` for
+all species in ``plot_id`` 13 in the following dataset:
 
 .. code-block:: python
 
@@ -235,8 +236,10 @@ Pandas DataFrame.
 In such cases, it is almost always a bad idea to write
 an explicit ``for`` loop over the elements.
 
-For instance, looping over the rows (a.k.a, *indices* or *records*)
-of a Pandas DataFrame is considered poor practice, and is very slow.
+For instance,
+looping over the rows (a.k.a, *indices* or *records*)
+of a Pandas DataFrame is considered poor practice,
+and is very slow.
 Consider replacing values in a column of a dataframe:
 
 .. code-block:: python
@@ -275,7 +278,8 @@ memory is allocated for intermediate results.
 Packages like `numexpr <https://github.com/pydata/numexpr>`_ aim to help with this.
 
 Understand when data needs to be copied v/s when data can be operated "in-place".
-It also helps to know *when* copies are made. For example, do you think
+It also helps to know *when* copies are made.
+For example, do you think
 the following code results in two copies of the same array?
 
 .. code-block:: python
@@ -285,8 +289,10 @@ the following code results in two copies of the same array?
    a = np.random.rand(50, 50)
    b = a
 
-`This article <https://nedbatchelder.com/text/names.html>`_ clears up a lot of confusion
-about how names and values work in Python and when copies are made v/s when they are not.
+`This article <https://nedbatchelder.com/text/names.html>`_
+clears up a lot of confusion
+about how names and values work in Python
+and when copies are made v/s when they are not.
 
 Access data from memory efficiently
 -----------------------------------
@@ -321,8 +327,8 @@ while Python is an
 `interpreted language <https://en.wikipedia.org/wiki/Interpreted_language>`_.
 
 However,
-the core of libraries like
-NumPy are actually written in C,
+the core of libraries like NumPy
+are actually written in C,
 making them much faster than "pure Python".
 
 It's also possible for you to write your own code
@@ -387,10 +393,12 @@ or if you have access to a bigger computer (e.g., a high-performance computing c
 parallelizing your code may be an option.
 
 * Note that many libraries support parallelization without any effort on your part.
-  Libraries like Numba and `Tensorflow <https://www.tensorflow.org/>`_ can use all the cores on your CPU,
+  Libraries like Numba and `Tensorflow <https://www.tensorflow.org/>`_
+  can use all the cores on your CPU,
   and even your GPU for accelerating computations.
 
-* `Dask <https://dask.pydata.org/en/latest/>`_ is a great library for parallelizing computations
+* `Dask <https://dask.pydata.org/en/latest/>`_ is a great library for
+  parallelizing computations
   and operating on large datasets that don't fit in RAM.
 
 * The `multiprocessing <https://docs.python.org/3/library/multiprocessing.html>`_ package

@@ -14,13 +14,14 @@ These are the thing you *need* to know if you are writing software
 that meets any of the following criteria:
 
 * You expect to be working on it for more than a couple of weeks.
-* You expect that it will be composed of more than a hundred
+* You expect that it will be composed of
+  more than a hundred
   or so lines of code.
 * You want it to produce results that can be trusted - for example,
   if you are publishing a research paper based on those results.
 * You expect that it will be used by one or more other people.
-* You are contributing to another project - e.g., an open-source
-  software package.
+* You are contributing to another project -
+  e.g., an open-source software package.
 
 What you will learn
 -------------------
@@ -38,8 +39,8 @@ What you will learn
 What you need to know
 ---------------------
 
-This tutorial assumes you know the very basics
-of programming with Python.
+This tutorial assumes you know the
+very basics of programming with Python.
 
 If you can write a loop and a function in Python,
 and if you know how to run a ``.py`` script,

@@ -292,7 +292,8 @@ and figure out why it returned ``a``?
 
 After fixing the code,
 re-run the tests to make sure you didn't break anything else
-in the process of fixing this bug -- this is one of the reasons tests are so valuable!
+in the process of fixing this bug --
+this is one of the reasons tests are so valuable!
 
 Types of testing
 ----------------
@@ -314,7 +315,8 @@ the focus of testing efforts is primarily:
 2. **Regression tests**: Regression tests aim to check whether
    changes to the program result in it producing
    different results from before.
-   Regression tests can test larger sections of code
+   Regression tests can test
+   larger sections of code
    than unit tests.
    As an example, if you are writing a machine learning application,
    you may want to run your model on small data
@@ -345,7 +347,8 @@ and realize better ways to organize it.
 The result is usually code that is
 more modular,
 more reusable
-and of course, more testable,
+and of course,
+more testable,
 than if you didn't do any testing.
 
 Growing a useful test suite
@@ -365,14 +368,16 @@ and it helps to keep the following in mind when growing tests:
    even if in practice they will be dealing with more complex and large datasets.
 
 2. **Tests should be focused**: each test should exercise a small part of your code.
-   When a test fails, it should be easy for you
-   to figure out which part of your program you need to focus debugging efforts on.
+   When a test fails,
+   it should be easy for you to
+   figure out which part of your program you need to focus debugging efforts on.
    This can be difficult if your code isn't modular,
    i.e., if different parts of your code depend heavily on each other.
    This is one of the reasons TDD is said to produce more modular code.
    
 3. **Tests should cover all possible code paths**: if your function has multiple code paths
-   (e.g., an if-else statement), write tests that execute both the "if" part
+   (e.g., an if-else statement),
+   write tests that execute both the "if" part
    and the "else" part.
    Otherwise, you might have bugs in your code and still have all tests pass.
 
