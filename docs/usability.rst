@@ -4,9 +4,6 @@ Improving the usability of Python programs
 Logging
 -------
 
-What is *Logging*?
-^^^^^^^^^^^^^^^^^^
-
 It can be useful  to print out either a message or the  value of some variable,
 etc.,  while  your  code is  running.  This  is  quite  common and  is  usually
 accomplished with a simple call to the ``print`` function.
@@ -34,16 +31,17 @@ enough level of criticality is actually allowed to be printed.
 
 
 Logging Basics
-^^^^^^^^^^^^^^
+--------------
+
 
 The general  idea is  that there are  multiple levels of  messages that  can be
 printed. Typically these include:
 
-1. DEBUG    - used for diagnostic purposes.
-2. INFO     - used for basic information (most common).
-3. WARNING  - used for indicating non-normal behavior.
-4. CRITICAL - used for indicating a problem (but program can continue).
-5. ERROR    - used for exception messages (the program cannot continue).
+1. DEBUG    - diagnostic purposes.
+2. INFO     - basic information (most common).
+3. WARNING  - indicating non-normal behavior.
+4. ERROR    - error (the operation cannot continue).
+5. CRITICAL - error (the program cannot continue).
 
 During the initialization portion of your  code, you would configure a *logger*
 object with a  format, where to print messages (e.g.,  console, file, or both),
@@ -54,11 +52,13 @@ be printed. Then, allow the user to override this with a `command line argument
 
 
 Example Setup
-^^^^^^^^^^^^^
+-------------
 
 Python has a `logging <https://docs.python.org/3/library/logging.html>`_ module
 as part of the  standard library. It is very comprehensive  and allows the user
-to heavily customize many parts of the behavior.
+to heavily customize many parts of the behavior. It is pretty strait forward to 
+implement your own logging functionality; unless you're doing something special 
+why not use the standard library?
 
 .. code-block:: python
 
@@ -67,10 +67,7 @@ to heavily customize many parts of the behavior.
     log = logging.getLogger("ProjectName")
 
     file_handler = logging.FileHandler("path/for/output.log")
-    file_handler.setLevel(logging.INFO)
-
     console_handler = logging.StreamHandler()
-    console_handler.setLevel(logging.INFO)
 
     formatter = logging.Formatter("%(levelname)s %(asctime)s %(name)s - %(message)s")
     file_handler.setFormatter(formatter)
@@ -87,8 +84,8 @@ Then, somewhere in the code:
     log.debug("report on some variable")
     log.info("notification of milestone")
     log.warn("non-standard behavior")
-    log.critical("there is an issue")
-    log.error("halting execution")
+    log.error("unrecoverable issue")
+    log.critical("panic!")
 
 .. code-block:: none
 
@@ -103,7 +100,7 @@ assigned level will make it passed the filter.
 
 
 Logging with Color
-^^^^^^^^^^^^^^^^^^
+------------------
 
 Finally, another common feature  of logging is to add color  as an indicator of
 the message type. Obviously, this only  applies to messages that are printed to
@@ -134,59 +131,36 @@ implementation   provided   right  in   the   standard   library  -   `argparse
 The *argparse*  module, as  well as  the others, rely  on a  universally except
 convention for how  command line arguments should be structured.  Nearly all of
 the  standard  utilities on  Unix/Linux  systems  use  this same  syntax.  This
-convention covers both the command line argument syntax as well as the stucture
+convention covers both the command line argument syntax as well as the structure
 of *usage*  statements that your  script prints  out (e.g., when  supplying the
 ``--help`` option).  The *argparse* module actually  takes care of all  of this
 for you.
 
-Unix Convension
+Unix Convention
 ^^^^^^^^^^^^^^^
 
-There is a fair bit of complexity to the convention surrounding the *usage* 
-statetments, but the argument syntax is fairly simple.
+There is  a fair bit  of complexity to  the convention surrounding  the *usage*
+statements, but the argument syntax is fairly simple.
 
-*Positional arguments* are those that don't have names. These are usually file
-paths in the context of analysis scripts.
+*Positional arguments* are those that don't  have names. These are usually file
+paths in the  context of analysis scripts. *Optional arguments*  are those that
+have defaults and may or may not accept a value.
 
-...
+Optional arguments  can be  specified with  *short form*  or *long  form* names
+(usually both). The short  form names are a single letter  preceded by a single
+dash (e.g.,  ``-a``). Short  form options  that don't take  an argument  can be
+stacked (e.g., ``-abc``).  Long form arguments are whole words  are preceded by
+two dashes (e.g., ``--debug``). Long form arguments that are multiple words are
+usually joined with dashes (e.g., ``--output-directory``).
+
 
 Simple Example
 ^^^^^^^^^^^^^^
 
-The easiest way to  provide a stand alone script as part of  your package is to
-define  the  script within  a  ``.py``  file inside  of  a  function, and  then
-from  within  the  ``setup.py``  file  *point*  to  that  function  within  the
-"console_scripts"  section  of the  "entry_points"  argument  to the  ``setup``
-function.
-
-.. code-block:: python
-
-    # do_science.py
-    # script for doing cool science things
-
-    import argparse
-
-    parser = argparse.ArgumentParser(prog="do_science")
-    parser.add_argument("input_file")  # positional argument
-    parser.add_argument("-d", "--debug", action="store_true") # option
-
-    def main(*argv: str) -> int:
-        """Main entry point for `do_science`.
-
-           Arguments:
-           *argv: str
-               Command line arguments (e.g., `sys.argv`).
-
-           Returns:
-           exit_status: int
-               0 if success, non-zero otherwise.
-        """
-
-        opts = parser.parse_args(argv)
-        # opt is a namespace
-        # opt.input_file is name of file
-        # opt.debug is True or False (default is False w/ "store_true")
-        return 0
+The best (most robust and cross-platform) way of providing a stand along script
+with your package is to let your `setup.py` file handle it. Doing the following
+will create the proper  executable on both Windows and Unix  systems and put it
+in a place that is readily callable (i.e., on the user's `PATH`).
 
 .. code-block:: python
 
@@ -200,16 +174,84 @@ function.
         # "{name}" will be on your PATH in the same "/bin/"
         # alongside python/pip executables.
         entry_points = {"console_scripts": [
-            "do_science=my_package.do_science:main"
+            "do_science=my_package.do_science:main",
         ]},
     # ...
     )
 
+This says  that I  have a file,  ``my_package/do_science.py``, with  a function
+called ``main`` that  when called does the  thing I want the script  to do. The
+function  won't be  given any  arguments,  but we  can  get what  we need  from
+``sys.argv``. This has the effect of  creating an executable we can invoke with
+the name ``do_science`` that behaves equivalent to the following.
+
+.. code-block:: python
+
+    import sys
+    from my_package.do_science import main
+    sys.exit(main())
+
+With this  in mind, your  function can and  should return integer  values which
+will  be  used  as the  exit  status  of  the  command. This  is  another  Unix
+convention;  returning  zero  is  for  success,  returning  a  non-zero  status
+indicates some specific error has occurred.
+
+The following shows a basic usage of ``argparse`` and how to define your "main"
+function.
+
+.. code-block:: python
+
+    # do_science.py
+    # script for doing cool science things
+
+    import argparse
+
+    parser = argparse.ArgumentParser(prog="do_science",
+                                     description="do cool science thing")
+
+    # positional argument
+    parser.add_argument("input_file", help="path to input data file")
+
+    # optional argument
+    parser.add_argument("-d", "--debug", action="store_true",
+                        help="enable debugging messages")
+
+    def main() -> int:
+        """Main entry point for `do_science`.
+           
+           Returns:
+           exit_status: int
+               0 if success, non-zero otherwise.
+        """
+
+        # parse_args() automatically grabs sys.argv if you don't provide them.
+        opts = parser.parse_args()
+        # opts is a namespace
+        # opts.input_file is a string with the value from the command line
+        # opts.debug is True or False (default is False w/ "store_true")
+        return 0
+
+
 After the package is installed, ``pip install my_package ...``, you'll be able to
 call the script:
 
-.. code-block:: bash
+.. code-block:: none
 
-    > do_science some/file.dat --debug
+    > do_science 
+    usage: do_science [-h] [-d] input_file
+
+.. code-block:: none
+
+    > do_science --help
+    usage: do_science [-h] [-d] input_file
+    
+    do cool science thing
+
+    positional arguments:
+      input_file   path to input data file
+    
+    optional arguments:
+      -h, --help   show this help message and exit
+      -d, --debug  enable debugging messages
 
 
