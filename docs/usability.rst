@@ -27,11 +27,11 @@ going as expected. These are all different *levels* of messaging.
 *Logging* is  simply engaging in this  behavior of printing out  messages, with
 the added  feature that you include  meta data (e.g., a  timestamp, the message
 category) with the message, as well as a filter where only messages with a high
-enough level of criticality is actually allowed to be printed.
+enough level of criticality are actually allowed to be printed.
 
 
 Logging Basics
---------------
+~~~~~~~~~~~~~~
 
 
 The general  idea is  that there are  multiple levels of  messages that  can be
@@ -52,7 +52,7 @@ be printed. Then, allow the user to override this with a `command line argument
 
 
 Example Setup
--------------
+~~~~~~~~~~~~~
 
 Python has a `logging <https://docs.python.org/3/library/logging.html>`_ module
 as part of the  standard library. It is very comprehensive  and allows the user
@@ -91,8 +91,8 @@ Then, somewhere in the code:
 
     INFO 2018-07-24 09:41:56,683 ProjectName - notification of milestone
     WARNING 2018-07-24 09:41:56,835 ProjectName - non-standard behavior
-    CRITICAL 2018-07-24 09:41:57,103 ProjectName - there is an issue
-    ERROR 2018-07-24 09:41:57,103 ProjectName - halting execution
+    ERROR 2018-07-24 09:41:57,103 ProjectName - unrecoverable issue
+    CRITICAL 2018-07-24 09:41:57,103 ProjectName - panic!
 
 Notice that the debug  message was not printed. This is because  we set the log
 level to  ``INFO``. Only  messages with  a level  equal to  or higher  then the
@@ -100,7 +100,7 @@ assigned level will make it passed the filter.
 
 
 Logging with Color
-------------------
+~~~~~~~~~~~~~~~~~~
 
 Finally, another common feature  of logging is to add color  as an indicator of
 the message type. Obviously, this only  applies to messages that are printed to
@@ -111,8 +111,8 @@ the meta data is a bold color. The color codes are generally as follows:
 - DEBUG (blue)
 - INFO (green)
 - WARNING (orange or yellow)
-- CRITICAL (purple)
 - ERROR (red)
+- CRITICAL (purple)
 
 
 Command Line Arguments
@@ -126,9 +126,9 @@ everything you need to do this built right in.
 As   with  logging,   there  are   several  python   packages  available   that
 handle   command  line   argument   parsing  for   you,   including  a   robust
 implementation   provided   right  in   the   standard   library  -   `argparse
-<https://python.org/argparse>`_.
+<https://docs.python.org/3/library/argparse.html>`_.
 
-The *argparse*  module, as  well as  the others, rely  on a  universally except
+The *argparse*  module, as  well as  the others, rely  on a  universally excepted
 convention for how  command line arguments should be structured.  Nearly all of
 the  standard  utilities on  Unix/Linux  systems  use  this same  syntax.  This
 convention covers both the command line argument syntax as well as the structure
@@ -137,7 +137,7 @@ of *usage*  statements that your  script prints  out (e.g., when  supplying the
 for you.
 
 Unix Convention
-^^^^^^^^^^^^^^^
+~~~~~~~~~~~~~~~
 
 There is  a fair bit  of complexity to  the convention surrounding  the *usage*
 statements, but the argument syntax is fairly simple.
@@ -149,13 +149,14 @@ have defaults and may or may not accept a value.
 Optional arguments  can be  specified with  *short form*  or *long  form* names
 (usually both). The short  form names are a single letter  preceded by a single
 dash (e.g.,  ``-a``). Short  form options  that don't take  an argument  can be
-stacked (e.g., ``-abc``).  Long form arguments are whole words  are preceded by
+stacked (e.g., ``-abc``).  Long form arguments are whole words  and preceded by
 two dashes (e.g., ``--debug``). Long form arguments that are multiple words are
 usually joined with dashes (e.g., ``--output-directory``).
 
+There is more, but these are the basics.
 
 Simple Example
-^^^^^^^^^^^^^^
+~~~~~~~~~~~~~~
 
 The best (most robust and cross-platform) way of providing a stand along script
 with your package is to let your `setup.py` file handle it. Doing the following
@@ -218,7 +219,7 @@ function.
 
     def main() -> int:
         """Main entry point for `do_science`.
-           
+
            Returns:
            exit_status: int
                0 if success, non-zero otherwise.
