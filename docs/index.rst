@@ -66,8 +66,8 @@ you will need:
    packaging
    testing
    documenting
-   performance
    usability
+   performance
 
 
 Indices and tables
