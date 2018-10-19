@@ -34,8 +34,8 @@ What you will learn
    even as you make changes to it.
 3. How to document your code so that it is easy for
    you and others to use and navigate.
-4. How to improve the performance of your code.
-5. How to improve the usability of your code.
+4. How to improve the usability of your code.
+5. How to improve the performance of your code.
 
 What you need to know
 ---------------------
