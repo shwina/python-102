@@ -146,7 +146,7 @@ each containing related data and functionality.
    :caption: graphics.py
 
 Typically, the "top-level" executable code is
-put in in a separate script
+put in a separate script
 which imports functions and data from other modules:
 
 .. code-block:: python 
